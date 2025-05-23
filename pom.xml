@@ -55,6 +55,13 @@
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>mx.com.sw.services</groupId>
+			<artifactId>SW-JAVA</artifactId>
+			<version>1.0.19.4</version>
+		</dependency>
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

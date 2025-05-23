@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
+
 public class FacturasEmitidas {
     @Id
     @GeneratedValue

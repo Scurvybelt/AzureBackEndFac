@@ -12,7 +12,6 @@ import org.springframework.data.annotation.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Clientes {
     @Id
     @GeneratedValue

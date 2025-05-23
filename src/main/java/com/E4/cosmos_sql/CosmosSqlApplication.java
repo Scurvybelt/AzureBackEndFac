@@ -1,5 +1,6 @@
 package com.E4.cosmos_sql;
 
+import com.E4.cosmos_sql.model.LoginRequest;
 import com.azure.cosmos.implementation.User;
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.GeneratedValue;
@@ -26,6 +27,8 @@ public class CosmosSqlApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CosmosSqlApplication.class, args);
 	}
+
+
 
 }
 //

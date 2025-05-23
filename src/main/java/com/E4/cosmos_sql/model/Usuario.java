@@ -5,48 +5,47 @@ import com.azure.spring.data.cosmos.core.mapping.GeneratedValue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.annotation.Id;
 
 @Container(containerName = "Usuarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Usuario {
     @Id
     @GeneratedValue
     private String id_Usuario;
-    private String Nombre;
-    private String Correo;
-    private String Regimen_Fiscal;
-    private String RFC;
-    private String Rol;
-    private String Codigo_Postal;
-    private String Contraseña;
+    private String nombre;
+    private String correo;
+    private String regimen_Fiscal;
+    private String rfc;
+    private String rol;
+    private String codigo_Postal;
+    private String contraseña;
 
     public String getCodigo_Postal() {
-        return Codigo_Postal;
+        return codigo_Postal;
     }
 
     public void setCodigo_Postal(String codigo_Postal) {
-        Codigo_Postal = codigo_Postal;
+        this.codigo_Postal = codigo_Postal;
     }
 
     public String getContraseña() {
-        return Contraseña;
+        return contraseña;
     }
 
     public void setContraseña(String contraseña) {
-        Contraseña = contraseña;
+        this.contraseña = contraseña;
     }
 
     public String getCorreo() {
-        return Correo;
+        return correo;
     }
 
     public void setCorreo(String correo) {
-        Correo = correo;
+        this.correo = correo;
     }
 
     public String getId_Usuario() {
@@ -58,34 +57,38 @@ public class Usuario {
     }
 
     public String getNombre() {
-        return Nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
-        Nombre = nombre;
+        this.nombre = nombre;
     }
 
     public String getRegimen_Fiscal() {
-        return Regimen_Fiscal;
+        return regimen_Fiscal;
     }
 
     public void setRegimen_Fiscal(String regimen_Fiscal) {
-        Regimen_Fiscal = regimen_Fiscal;
+        this.regimen_Fiscal = regimen_Fiscal;
     }
 
-    public String getRFC() {
-        return RFC;
+    public String getRfc() {
+        return rfc;
     }
 
-    public void setRFC(String RFC) {
-        this.RFC = RFC;
+    public void setRfc(String rfc) {
+        this.rfc = rfc;
     }
 
     public String getRol() {
-        return Rol;
+        return rol;
     }
 
     public void setRol(String rol) {
-        Rol = rol;
+        this.rol = rol;
     }
+
+
+
+
 }
