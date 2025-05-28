@@ -1,8 +1,10 @@
 package com.E4.cosmos_sql.controller;
 
+import com.E4.cosmos_sql.model.Clientes;
 import com.E4.cosmos_sql.model.LoginRequest;
 import com.E4.cosmos_sql.model.Usuario;
 import com.E4.cosmos_sql.repository.UserRepository;
+import com.E4.cosmos_sql.utils.img.JwtUtil;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +38,33 @@ public class UsuariosController {
         return userRepository.findById(id);
     }
 
-    @PostMapping
-    public Mono<ResponseEntity<Map<String, Object>>> createUsuario(@RequestBody Usuario usuario) {
+//    @PostMapping
+//    public Mono<ResponseEntity<Map<String, Object>>> createUsuario(@RequestBody Usuario usuario) {
+//        return userRepository.save(usuario).map(savedUsuario -> {
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("message", "Usuario creado exitosamente");
+//            response.put("usuario", savedUsuario.getCorreo());
+//            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//        });
+//
+//    }
+    @PostMapping("/register")
+    public Mono<ResponseEntity<Map<String, Object>>> registerUsuario(@RequestBody Usuario usuario) {
+        if (usuario.getNombre() == null || usuario.getCorreo() == null || usuario.getContraseña() == null ||
+                usuario.getNombre().isEmpty() || usuario.getCorreo().isEmpty() || usuario.getContraseña().isEmpty()) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "Todos los campos son obligatorios");
+            return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse));
+        }
+
         return userRepository.save(usuario).map(savedUsuario -> {
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Usuario creado exitosamente");
+            response.put("status", "success");
+            response.put("message", "Usuario registrado exitosamente");
             response.put("usuario", savedUsuario.getCorreo());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         });
-
     }
 
     @PostMapping("/login")
@@ -53,10 +73,14 @@ public class UsuariosController {
                 .flatMap(usuario -> {
                     Map<String, Object> response = new HashMap<>();
                     if (usuario.getContraseña().equals(loginRequest.getContraseña())) {
+                        // Generate JWT token
+                        String token = JwtUtil.generateToken(usuario.getCorreo());
+
                         response.put("status", "success");
                         response.put("message", "Login exitoso");
                         response.put("usuario", usuario.getCorreo());
-                        // Aquí podrías agregar un token JWT si es necesario
+                        response.put("token", token); // Include the token in the response
+
                         return Mono.just(ResponseEntity.ok(response));
                     } else {
                         response.put("status", "error");
@@ -71,6 +95,9 @@ public class UsuariosController {
                     return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(response));
                 }));
     }
+
+
+
 
 
 //    @PutMapping("/{id}")

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.E4.cosmos_sql.CosmosSqlApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.082 s -- in com.E4.cosmos_sql.CosmosSqlApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.145 s -- in com.E4.cosmos_sql.CosmosSqlApplicationTests

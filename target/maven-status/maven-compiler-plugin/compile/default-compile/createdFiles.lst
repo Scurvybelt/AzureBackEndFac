@@ -6,4 +6,5 @@ com\E4\cosmos_sql\config\WebFluxConfig.class
 com\E4\cosmos_sql\model\FacturasEmitidas.class
 com\E4\cosmos_sql\repository\UserRepository.class
 com\E4\cosmos_sql\controller\FacturacionController.class
+com\E4\cosmos_sql\utils\img\JwtUtil.class
 com\E4\cosmos_sql\controller\UsuariosController.class
