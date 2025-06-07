@@ -16,9 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/clientes")
 public class ClientesController {
-
     private final ClientesRepository clientesRepository;
-
 
     @Autowired
     public ClientesController(ClientesRepository clientesRepository) {

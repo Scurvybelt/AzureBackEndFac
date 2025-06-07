@@ -50,6 +50,7 @@ public class UsuariosController {
 //    }
     @PostMapping("/register")
     public Mono<ResponseEntity<Map<String, Object>>> registerUsuario(@RequestBody Usuario usuario) {
+
         if (usuario.getNombre() == null || usuario.getCorreo() == null || usuario.getContraseña() == null ||
                 usuario.getNombre().isEmpty() || usuario.getCorreo().isEmpty() || usuario.getContraseña().isEmpty()) {
             Map<String, Object> errorResponse = new HashMap<>();

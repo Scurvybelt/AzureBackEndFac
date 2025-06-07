@@ -28,8 +28,6 @@ public class CosmosSqlApplication {
 		SpringApplication.run(CosmosSqlApplication.class, args);
 	}
 
-
-
 }
 //
 //@Component

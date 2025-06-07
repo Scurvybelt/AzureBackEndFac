@@ -142,7 +142,6 @@ public class FacturacionController {
                 System.out.println(response.messageDetail);
 //                System.out.println(response.);
                 return ResponseEntity.ok(response.message);
-
             }
 //            // Realizamos la petición de generación al servicio
 //            Object responseObj = pdf.GeneratePdf(xmlTimbrado, "cfdi40", "logoB64", extras);

@@ -8,7 +8,4 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface ClientesRepository extends ReactiveCosmosRepository<Clientes, String> {
-    // Métodos personalizados opcionales
-//    Mono<Void> deleteById(String id_Usuario);
-//    Flux<Clientes> findById_Usuario(String id_Usuario);
 }

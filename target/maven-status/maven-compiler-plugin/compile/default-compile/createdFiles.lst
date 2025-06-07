@@ -1,10 +1,12 @@
 com\E4\cosmos_sql\model\Clientes.class
-com\E4\cosmos_sql\CosmosSqlApplication.class
 com\E4\cosmos_sql\model\LoginRequest.class
-com\E4\cosmos_sql\model\Usuario.class
 com\E4\cosmos_sql\config\WebFluxConfig.class
-com\E4\cosmos_sql\model\FacturasEmitidas.class
+com\E4\cosmos_sql\controller\ClientesController.class
+com\E4\cosmos_sql\repository\ClientesRepository.class
 com\E4\cosmos_sql\repository\UserRepository.class
 com\E4\cosmos_sql\controller\FacturacionController.class
 com\E4\cosmos_sql\utils\img\JwtUtil.class
+com\E4\cosmos_sql\CosmosSqlApplication.class
+com\E4\cosmos_sql\model\Usuario.class
+com\E4\cosmos_sql\model\FacturasEmitidas.class
 com\E4\cosmos_sql\controller\UsuariosController.class

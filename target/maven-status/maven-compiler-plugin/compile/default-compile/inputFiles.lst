@@ -1,5 +1,6 @@
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\config\CosmosConfig.java
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\config\WebFluxConfig.java
+D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\controller\ClientesController.java
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\controller\FacturacionController.java
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\controller\UsuariosController.java
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\CosmosSqlApplication.java
@@ -7,5 +8,6 @@ D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\model\FacturasEmitidas.java
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\model\LoginRequest.java
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\model\Usuario.java
+D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\repository\ClientesRepository.java
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\repository\UserRepository.java
 D:\Tareas UV\BaseDeDatosDistribuidos\cosmos-sql\src\main\java\com\E4\cosmos_sql\utils\img\JwtUtil.java
