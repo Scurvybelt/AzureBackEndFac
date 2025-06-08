@@ -21,11 +21,17 @@ import Utils.Responses.Stamp.SuccessV4Response;
 import Utils.Responses.Storage.StorageData;
 import Utils.Responses.Storage.StorageResponse;
 
+import com.E4.cosmos_sql.model.FacturasEmitidas;
+import com.E4.cosmos_sql.model.Usuario;
+import com.E4.cosmos_sql.repository.FacturasEmitidasRepository;
+import com.E4.cosmos_sql.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
@@ -33,8 +39,74 @@ import java.util.logging.Logger;
 
 
 @RestController
-@RequestMapping("/fact")
+@RequestMapping("/facturas")
 public class FacturacionController {
+
+    @PostMapping("/crear")
+    public Mono<ResponseEntity<Map<String, Object>>> crearFactura(@RequestBody FacturasEmitidas factura) {
+        return facturasEmitidasRepository.save(factura)
+                .doOnNext(savedFactura -> {
+                    System.out.println("Factura guardada: " + savedFactura);
+                })
+                .map(savedFactura -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", "success");
+                    response.put("message", "Factura creada exitosamente");
+                    response.put("factura", savedFactura);
+                    System.out.println("Respuesta generada: " + response);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                });
+    }
+
+    @GetMapping("/listar")
+    public Mono<ResponseEntity<Map<String, Object>>> listarFacturas() {
+        return facturasEmitidasRepository.findAll().collectList().map(facturas -> {
+            List<Map<String, Object>> facturasConCamposCalculados = new ArrayList<>();
+            for (FacturasEmitidas factura : facturas) {
+                Map<String, Object> facturaMap = new HashMap<>();
+                facturaMap.put("id_Factura", factura.getId_Factura());
+                facturaMap.put("Num_Serie", factura.getNum_Serie());
+                facturaMap.put("Folio", factura.getFolio());
+                facturaMap.put("UUID", factura.getUUID());
+                facturaMap.put("Base64", factura.getBase64());
+                facturaMap.put("Fecha_Emision", factura.getFecha_Emision());
+                facturaMap.put("Fecha_Timbrado", factura.getFecha_Timbrado());
+                facturaMap.put("id_Cliente", factura.getId_Cliente());
+                facturaMap.put("id_Usuario", factura.getId_Usuario());
+                facturaMap.put("Total", factura.getTotal());
+                facturaMap.put("SubTotal", factura.getSubTotal()); // Include SubTotal
+                facturaMap.put("IVA", factura.getIVA());           // Include IVA
+                facturasConCamposCalculados.add(facturaMap);
+            }
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Facturas listadas exitosamente");
+            response.put("facturas", facturasConCamposCalculados);
+            return ResponseEntity.ok(response);
+        });
+    }
+
+    @GetMapping("/factura/{idFactura}")
+    public Mono<ResponseEntity<Map<String, Object>>> obtenerFacturaPorId(@PathVariable String idFactura) {
+        return facturasEmitidasRepository.findById(idFactura).map(factura -> {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Factura encontrada exitosamente");
+            response.put("factura", factura);
+            response.put("SubTotal", factura.getSubTotal()); // Include SubTotal
+            response.put("IVA", factura.getIVA());           // Include IVA
+            return ResponseEntity.ok(response);
+        }).defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                "status", "error",
+                "message", "Factura no encontrada"
+        )));
+    }
+
+    @Autowired
+    private FacturasEmitidasRepository facturasEmitidasRepository;
+
+    @Autowired
+    private UserRepository usuarioRepository;
 //    @Autowired
 //    private JwtTokenUtil jwtTokenUtil;
     private String xml;
@@ -42,7 +114,7 @@ public class FacturacionController {
     private String pdfBase64;
     private String email;
     //@RequestBody String email,String rfc, String servicio, String token, String fechaHora, String nombreCompleto, String regimenFiscal, String Codigo_Postal, String usoCFDI
-    @PostMapping("/facturaCFDI")
+    @PostMapping("/")
     public ResponseEntity<String> facturaCFDI(@RequestBody Map<String, Object> requestData){
 
         Map<String, Object> data = (Map<String, Object>) requestData.get("data");
@@ -196,6 +268,10 @@ public class FacturacionController {
 
         return null;
     }
+
+
+
+
 
 
     public static String convertirImagenABase64(String pathImagen) throws IOException {

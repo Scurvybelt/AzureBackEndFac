@@ -48,25 +48,7 @@ public class UsuariosController {
 //        });
 //
 //    }
-    @PostMapping("/register")
-    public Mono<ResponseEntity<Map<String, Object>>> registerUsuario(@RequestBody Usuario usuario) {
 
-        if (usuario.getNombre() == null || usuario.getCorreo() == null || usuario.getContraseña() == null ||
-                usuario.getNombre().isEmpty() || usuario.getCorreo().isEmpty() || usuario.getContraseña().isEmpty()) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("status", "error");
-            errorResponse.put("message", "Todos los campos son obligatorios");
-            return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse));
-        }
-
-        return userRepository.save(usuario).map(savedUsuario -> {
-            Map<String, Object> response = new HashMap<>();
-            response.put("status", "success");
-            response.put("message", "Usuario registrado exitosamente");
-            response.put("usuario", savedUsuario.getCorreo());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        });
-    }
 
     @PostMapping("/login")
     public Mono<ResponseEntity<Map<String, Object>>> login(@RequestBody LoginRequest loginRequest) {
