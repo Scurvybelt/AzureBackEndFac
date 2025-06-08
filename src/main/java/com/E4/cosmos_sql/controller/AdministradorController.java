@@ -1,12 +1,10 @@
 package com.E4.cosmos_sql.controller;
 
-import com.E4.cosmos_sql.model.Clientes;
+import com.E4.cosmos_sql.model.Administrador;
 import com.E4.cosmos_sql.model.LoginRequest;
 import com.E4.cosmos_sql.model.Usuario;
-import com.E4.cosmos_sql.repository.UserRepository;
+import com.E4.cosmos_sql.repository.AdminRepository;
 import com.E4.cosmos_sql.utils.img.JwtUtil;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,27 +16,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/usuarios")
-
-public class UsuariosController {
-    private final UserRepository userRepository;
+@RequestMapping("/admin")
+public class AdministradorController {
+    private final AdminRepository adminRepository;
 
     @Autowired
-    public UsuariosController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AdministradorController(AdminRepository adminRepository) {
+        this.adminRepository = adminRepository;
     }
 
     @GetMapping
-    public Flux<Usuario> getAllUsuarios() {
-        return userRepository.findAll();
+    public Flux<Administrador> getAllAdmins() {
+        return adminRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public Mono<Usuario> getUsuarioById(@PathVariable String id) {
-        return userRepository.findById(id);
+    public Mono<Administrador> getUsuarioById(@PathVariable String id) {
+        return adminRepository.findById(id);
     }
+
     @GetMapping("/current")
-    public Mono<ResponseEntity<Map<String, Object>>> getCurrentUser(@RequestHeader("Authorization") String token) {
+    public Mono<ResponseEntity<Map<String, Object>>> getCurrentAdmin(@RequestHeader("Authorization") String token) {
         try {
             // Extraer el token del header "Bearer <token>"
             String jwtToken = token.substring(7);
@@ -54,7 +52,7 @@ public class UsuariosController {
             // Obtener el correo del token usando getSubjectFromToken
             String correo = JwtUtil.getSubjectFromToken(jwtToken);
 
-            return userRepository.findByCorreo(correo)
+            return adminRepository.findByCorreo(correo)
                     .map(usuario -> {
                         Map<String, Object> response = new HashMap<>();
                         response.put("status", "success");
@@ -75,30 +73,48 @@ public class UsuariosController {
             return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response));
         }
     }
-//    @PostMapping
-//    public Mono<ResponseEntity<Map<String, Object>>> createUsuario(@RequestBody Usuario usuario) {
-//        return userRepository.save(usuario).map(savedUsuario -> {
+    //    @PostMapping
+//    public Mono<ResponseEntity<Map<String, Object>>> createUsuario(@RequestBody Usuario admin) {
+//        return userRepository.save(admin).map(savedUsuario -> {
 //            Map<String, Object> response = new HashMap<>();
 //            response.put("message", "Usuario creado exitosamente");
-//            response.put("usuario", savedUsuario.getCorreo());
+//            response.put("admin", savedUsuario.getCorreo());
 //            return ResponseEntity.status(HttpStatus.CREATED).body(response);
 //        });
 //
 //    }
+    @PostMapping("/register")
+    public Mono<ResponseEntity<Map<String, Object>>> registerAdmin(@RequestBody Administrador admin) {
 
+        if (admin.getNombre() == null || admin.getCorreo() == null || admin.getContraseña() == null ||
+                admin.getNombre().isEmpty() || admin.getCorreo().isEmpty() || admin.getContraseña().isEmpty()) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "Todos los campos son obligatorios");
+            return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse));
+        }
+
+        return adminRepository.save(admin).map(savedAdmin -> {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Administrador registrado exitosamente");
+            response.put("admin", savedAdmin.getCorreo());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        });
+    }
 
     @PostMapping("/login")
     public Mono<ResponseEntity<Map<String, Object>>> login(@RequestBody LoginRequest loginRequest) {
-        return userRepository.findByCorreo(loginRequest.getCorreo())
-                .flatMap(usuario -> {
+        return adminRepository.findByCorreo(loginRequest.getCorreo())
+                .flatMap(admin -> {
                     Map<String, Object> response = new HashMap<>();
-                    if (usuario.getContraseña().equals(loginRequest.getContraseña())) {
+                    if (admin.getContraseña().equals(loginRequest.getContraseña())) {
                         // Generate JWT token
-                        String token = JwtUtil.generateToken(usuario.getCorreo());
+                        String token = JwtUtil.generateToken(admin.getCorreo());
 
                         response.put("status", "success");
                         response.put("message", "Login exitoso");
-                        response.put("usuario", usuario.getCorreo());
+                        response.put("admin", admin.getCorreo());
                         response.put("token", token); // Include the token in the response
 
                         return Mono.just(ResponseEntity.ok(response));
@@ -116,35 +132,21 @@ public class UsuariosController {
                 }));
     }
 
-    @PutMapping("/{id}")
-    public Mono<ResponseEntity<Map<String, Object>>> updateUsuario(@PathVariable String id, @RequestBody Usuario usuario) {
-        return userRepository.findById(id)
-                .flatMap(existingUsuario -> {
-                    // Actualiza solo los campos permitidos, manteniendo la contraseña si no se proporciona una nueva
-                    if (usuario.getNombre() != null) {
-                        existingUsuario.setNombre(usuario.getNombre());
-                    }
-                    if (usuario.getCorreo() != null) {
-                        existingUsuario.setCorreo(usuario.getCorreo());
-                    }
-                    if (usuario.getContraseña() != null && !usuario.getContraseña().isEmpty()) {
-                        existingUsuario.setContraseña(usuario.getContraseña());
-                    }
-                    // Actualiza otros campos según sea necesario
 
-                    return userRepository.save(existingUsuario)
-                            .map(updatedUsuario -> {
-                                Map<String, Object> response = new HashMap<>();
-                                response.put("status", "success");
-                                response.put("message", "Usuario actualizado exitosamente");
-                                return ResponseEntity.ok(response);
-                            });
-                })
-                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
-    }
+
+
+
+//    @PutMapping("/{id}")
+//    public Mono<Usuario> updateUsuario(@PathVariable String id, @RequestBody Usuario admin) {
+//        return userRepository.findById(id)
+//                .flatMap(existingUsuario -> {
+//                    admin.setId_Usuario(existingUsuario.getId_Usuario());
+//                    return userRepository.save(admin);
+//                });
+//    }
 
     @DeleteMapping("/{id}")
-    public Mono<Void> deleteUsuario(@PathVariable String id) {
-        return userRepository.deleteById(id);
+    public Mono<Void> deleteAdmin(@PathVariable String id) {
+        return adminRepository.deleteById(id);
     }
 }
