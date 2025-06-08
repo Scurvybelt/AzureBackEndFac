@@ -16,9 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/clientes")
 public class ClientesController {
-
     private final ClientesRepository clientesRepository;
-
 
     @Autowired
     public ClientesController(ClientesRepository clientesRepository) {
@@ -68,9 +66,6 @@ public class ClientesController {
                 .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build()));
     }
 
-
-
-
 //    @DeleteMapping("/{id}")
 //    public Mono<ResponseEntity<Void>> deleteCliente(@PathVariable String id) {
 //        return clientesRepository.findById(id)
@@ -79,5 +74,9 @@ public class ClientesController {
 //                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
 //    }
 
+    @DeleteMapping("/{id}")
+    public Mono<Void> deleteCliente(@PathVariable String id) {
+        return clientesRepository.deleteById(id);
+    }
 
 }

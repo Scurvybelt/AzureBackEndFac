@@ -7,7 +7,5 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface UserRepository extends ReactiveCosmosRepository<Usuario, String> {
-    // Puedes agregar métodos personalizados si es necesario, por ejemplo:
-    // Flux<Usuario> findByNombre(String nombre);
     Mono<Usuario> findByCorreo(String correo);
 }
