@@ -75,16 +75,16 @@ public class UsuariosController {
             return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response));
         }
     }
-//    @PostMapping
-//    public Mono<ResponseEntity<Map<String, Object>>> createUsuario(@RequestBody Usuario usuario) {
-//        return userRepository.save(usuario).map(savedUsuario -> {
-//            Map<String, Object> response = new HashMap<>();
-//            response.put("message", "Usuario creado exitosamente");
-//            response.put("usuario", savedUsuario.getCorreo());
-//            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//        });
-//
-//    }
+    @PostMapping
+    public Mono<ResponseEntity<Map<String, Object>>> createUsuario(@RequestBody Usuario usuario) {
+        return userRepository.save(usuario).map(savedUsuario -> {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Usuario creado exitosamente");
+            response.put("usuario", savedUsuario.getCorreo());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        });
+
+    }
 
 
     @PostMapping("/login")

@@ -20,6 +20,15 @@ public class FacturasEmitidas {
     private String Num_Serie;
     private String name;
     private String Folio;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     private String UUID;
     private String Base64;
     private LocalDateTime Fecha_Emision;

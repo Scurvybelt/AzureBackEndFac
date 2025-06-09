@@ -17,17 +17,29 @@ import java.util.Map;
 @RequestMapping("/clientes")
 public class ClientesController {
     private final ClientesRepository clientesRepository;
+    private final UserRepository usuarioRepository;
 
     @Autowired
-    public ClientesController(ClientesRepository clientesRepository) {
+    public ClientesController(ClientesRepository clientesRepository, UserRepository usuarioRepository) {
         this.clientesRepository = clientesRepository;
+        this.usuarioRepository = usuarioRepository;
 
+    }
+
+    @GetMapping("/userbycorreo")
+    public Flux<Clientes> getClientesByUsuarioCorreo(@RequestParam String correo) {
+        return usuarioRepository.findByCorreo(correo)
+                .flatMapMany(usuario -> clientesRepository.findAll()
+                        .filter(cliente -> cliente.getId_Usuario() != null && cliente.getId_Usuario().equals(usuario.getId_Usuario()))
+                );
     }
 
     @GetMapping
     public Flux<Clientes> getAllClientes() {
         return clientesRepository.findAll();
     }
+
+
 
     @GetMapping("/{id}")
     public Mono<ResponseEntity<Clientes>> getClienteById(@PathVariable String id) {

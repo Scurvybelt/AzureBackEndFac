@@ -1,18 +1,26 @@
 package com.E4.cosmos_sql.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.config.CorsRegistry;
-import org.springframework.web.reactive.config.EnableWebFlux;
-import org.springframework.web.reactive.config.WebFluxConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 @Configuration
-@EnableWebFlux
-public class WebFluxConfig implements WebFluxConfigurer {
+public class WebFluxConfig {
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*") // Configurar los orígenes permitidos
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+    @Bean
+    public CorsWebFilter corsWebFilter() {
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.addAllowedOrigin("*"); // Configurar los orígenes permitidos
+        corsConfig.addAllowedMethod("*"); // Permitir todos los métodos
+        corsConfig.addAllowedHeader("*"); // Permitir todos los encabezados
+        corsConfig.addExposedHeader("Access-Control-Allow-Methods"); // Exponer encabezados necesarios
+        corsConfig.setAllowCredentials(true); // Permitir credenciales si es necesario
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+
+        return new CorsWebFilter(source);
     }
 }
