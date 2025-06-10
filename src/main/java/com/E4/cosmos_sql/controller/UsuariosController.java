@@ -37,6 +37,7 @@ public class UsuariosController {
     public Mono<Usuario> getUsuarioById(@PathVariable String id) {
         return userRepository.findById(id);
     }
+
     @GetMapping("/current")
     public Mono<ResponseEntity<Map<String, Object>>> getCurrentUser(@RequestHeader("Authorization") String token) {
         try {
@@ -107,6 +108,23 @@ public class UsuariosController {
                         response.put("message", "Contraseña incorrecta");
                         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response));
                     }
+                })
+                .switchIfEmpty(Mono.defer(() -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", "error");
+                    response.put("message", "Usuario no encontrado");
+                    return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(response));
+                }));
+    }
+
+    @GetMapping("/idByCorreo")
+    public Mono<ResponseEntity<Map<String, Object>>> getIdByCorreo(@RequestParam String correo) {
+        return userRepository.findByCorreo(correo)
+                .map(usuario -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", "success");
+                    response.put("id", usuario.getId_Usuario());
+                    return ResponseEntity.ok(response);
                 })
                 .switchIfEmpty(Mono.defer(() -> {
                     Map<String, Object> response = new HashMap<>();

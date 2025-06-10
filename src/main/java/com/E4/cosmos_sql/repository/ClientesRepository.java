@@ -12,4 +12,7 @@ import reactor.core.publisher.Mono;
 public interface ClientesRepository extends ReactiveCosmosRepository<Clientes, String> {
     @Query("SELECT * FROM Clientes c WHERE c.id_Cliente = @id_Cliente")
     Mono<Clientes> findById_Cliente(@Param("id_Cliente") String id_Cliente);
+
+    @Query("SELECT * FROM Clientes c WHERE c.nombre_RazonSocial = @nombre_RazonSocial")
+    Mono<Clientes> findByNombre_RazonSocial(@Param("nombre_RazonSocial") String nombre_RazonSocial);
 }
