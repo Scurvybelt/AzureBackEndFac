@@ -17,17 +17,31 @@ import java.util.Map;
 @RequestMapping("/clientes")
 public class ClientesController {
     private final ClientesRepository clientesRepository;
+    private final UserRepository usuarioRepository;
 
     @Autowired
-    public ClientesController(ClientesRepository clientesRepository) {
+    public ClientesController(ClientesRepository clientesRepository, UserRepository usuarioRepository) {
         this.clientesRepository = clientesRepository;
+        this.usuarioRepository = usuarioRepository;
 
+    }
+
+
+
+    @GetMapping("/userbycorreo")
+    public Flux<Clientes> getClientesByUsuarioCorreo(@RequestParam String correo) {
+        return usuarioRepository.findByCorreo(correo)
+                .flatMapMany(usuario -> clientesRepository.findAll()
+                        .filter(cliente -> cliente.getId_Usuario() != null && cliente.getId_Usuario().equals(usuario.getId_Usuario()))
+                );
     }
 
     @GetMapping
     public Flux<Clientes> getAllClientes() {
         return clientesRepository.findAll();
     }
+
+
 
     @GetMapping("/{id}")
     public Mono<ResponseEntity<Clientes>> getClienteById(@PathVariable String id) {
@@ -38,14 +52,27 @@ public class ClientesController {
 
     @PostMapping
     public Mono<ResponseEntity<Map<String, Object>>> createCliente(@RequestBody Clientes cliente) {
-        cliente.setFecha_Registro(java.time.LocalDate.now()); // Set current date
-        return clientesRepository.save(cliente).map(savedCliente -> {
-            Map<String, Object> response = new HashMap<>();
-            response.put("status", "success");
-            response.put("message", "Cliente creado exitosamente");
-            response.put("cliente", savedCliente);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        });
+        return clientesRepository.findByNombre_RazonSocial(cliente.getNombre_RazonSocial()) // Check if a client with the same nombre_RazonSocial exists
+                .flatMap(existingCliente -> {
+                    // If a client already exists, return a conflict response
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", "error");
+                    response.put("message", "El cliente con el mismo nombre_RazonSocial ya existe");
+                    return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).body(response));
+                })
+                .switchIfEmpty(
+                        // If no such client exists, create the new client
+                        Mono.defer(() -> {
+                            cliente.setFecha_Registro(java.time.LocalDate.now()); // Set the current date
+                            return clientesRepository.save(cliente).map(savedCliente -> {
+                                Map<String, Object> response = new HashMap<>();
+                                response.put("status", "success");
+                                response.put("message", "Cliente creado exitosamente");
+                                response.put("cliente", savedCliente);
+                                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                            });
+                        })
+                );
     }
 
     @PutMapping("/{id}")

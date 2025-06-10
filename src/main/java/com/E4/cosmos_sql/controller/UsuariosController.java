@@ -37,6 +37,7 @@ public class UsuariosController {
     public Mono<Usuario> getUsuarioById(@PathVariable String id) {
         return userRepository.findById(id);
     }
+
     @GetMapping("/current")
     public Mono<ResponseEntity<Map<String, Object>>> getCurrentUser(@RequestHeader("Authorization") String token) {
         try {
@@ -75,35 +76,17 @@ public class UsuariosController {
             return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response));
         }
     }
-//    @PostMapping
-//    public Mono<ResponseEntity<Map<String, Object>>> createUsuario(@RequestBody Usuario usuario) {
-//        return userRepository.save(usuario).map(savedUsuario -> {
-//            Map<String, Object> response = new HashMap<>();
-//            response.put("message", "Usuario creado exitosamente");
-//            response.put("usuario", savedUsuario.getCorreo());
-//            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//        });
-//
-//    }
-    @PostMapping("/register")
-    public Mono<ResponseEntity<Map<String, Object>>> registerUsuario(@RequestBody Usuario usuario) {
-
-        if (usuario.getNombre() == null || usuario.getCorreo() == null || usuario.getContraseña() == null ||
-                usuario.getNombre().isEmpty() || usuario.getCorreo().isEmpty() || usuario.getContraseña().isEmpty()) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("status", "error");
-            errorResponse.put("message", "Todos los campos son obligatorios");
-            return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse));
-        }
-
+    @PostMapping
+    public Mono<ResponseEntity<Map<String, Object>>> createUsuario(@RequestBody Usuario usuario) {
         return userRepository.save(usuario).map(savedUsuario -> {
             Map<String, Object> response = new HashMap<>();
-            response.put("status", "success");
-            response.put("message", "Usuario registrado exitosamente");
+            response.put("message", "Usuario creado exitosamente");
             response.put("usuario", savedUsuario.getCorreo());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         });
+
     }
+
 
     @PostMapping("/login")
     public Mono<ResponseEntity<Map<String, Object>>> login(@RequestBody LoginRequest loginRequest) {
@@ -125,6 +108,23 @@ public class UsuariosController {
                         response.put("message", "Contraseña incorrecta");
                         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response));
                     }
+                })
+                .switchIfEmpty(Mono.defer(() -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", "error");
+                    response.put("message", "Usuario no encontrado");
+                    return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(response));
+                }));
+    }
+
+    @GetMapping("/idByCorreo")
+    public Mono<ResponseEntity<Map<String, Object>>> getIdByCorreo(@RequestParam String correo) {
+        return userRepository.findByCorreo(correo)
+                .map(usuario -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", "success");
+                    response.put("id", usuario.getId_Usuario());
+                    return ResponseEntity.ok(response);
                 })
                 .switchIfEmpty(Mono.defer(() -> {
                     Map<String, Object> response = new HashMap<>();
